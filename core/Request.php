@@ -37,4 +37,77 @@ class Request{
 
         return $public_path;
     }
+
+
+    public static function validate($routes, $url){
+
+        foreach($routes as $route){
+            $regex_route = preg_replace_callback(
+                '/{([^}]+)}/',
+                function($matches){
+
+                                return "(?P<".$matches[1].">[^/]+)";
+                },
+                $route['path']
+            );
+
+            $regex_route = str_replace("/", "\/", $regex_route);
+            $regex_route = '/^'.$regex_route.'$/';
+
+            if(preg_match($regex_route, $url, $matches)){
+
+                $params = [];
+                foreach($matches as $key => $value){
+
+                    $params[$key]=$value;
+                }
+
+                unset($params[0]);
+
+                if(is_string($route['class'])){
+
+                    $route_class = $route['class'];
+                    $array_class = explode('@', $route_class);
+                    $controller  = new $array_class[0]();
+                    $method      = $array_class[1];
+
+                    $response = $controller->$method(...array_values($params));
+
+                    if(is_array($response)){
+                        $response = json_encode($response);
+                        header('Content-Type: application/json');
+                        echo $response;
+                        return false;
+                    } else{
+                        header('Content-Type: application/json');
+                        echo $response;
+                        return $response;
+                    }
+                }
+
+                if(is_callable($route['class'])){
+
+                    $response = $route['class']($params);
+
+                    if(is_array($response)){
+
+                        $response = json_encode($response);
+                        header('Content-Type: application/json');
+                        echo $response;
+                        return false;
+                    }else{
+
+                        header('Content-Type: application/json');
+                        echo $response;
+                        return $response;
+                    }
+                }
+            }
+        }
+
+        echo "404";
+        return "404";
+    }
+
+
 }
