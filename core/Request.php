@@ -79,8 +79,7 @@ class Request{
                         echo $response;
                         return false;
                     } else{
-                        header('Content-Type: application/json');
-                        echo $response;
+                        
                         return $response;
                     }
                 }
@@ -97,15 +96,12 @@ class Request{
                         return false;
                     }else{
 
-                        header('Content-Type: application/json');
-                        echo $response;
                         return $response;
                     }
                 }
             }
         }
 
-        echo "404";
         return "404";
     }
 

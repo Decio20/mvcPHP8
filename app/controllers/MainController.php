@@ -4,8 +4,8 @@ class MainController{
 
     public function index(){
 
-        echo "Hola";
-        return "Vista";
+        
+        return view('index');
     }
 
     public function show($id){

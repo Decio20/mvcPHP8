@@ -14,8 +14,15 @@ Route::get('/persona/{id}', "MainController@show");
 
 Route::group('/producto', function(){
 
-    Route::get('/id', "producto id tipo GET");
-    Route::get('/nombre/{name}', "producto id tipo GET");
+    Route::get('/id', function (){
+
+        return view("index");
+    });
+
+    Route::get('/nombre/{name}', function ($route){
+
+        return view("producto.index", ["name"=>$route['name']]);
+    });
 });
 
 
